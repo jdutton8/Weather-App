@@ -1,10 +1,13 @@
 var apiKey = 'cb0fb26fe05c92dfa0ba816b9520d228';
 
-var BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?q=';
+var BASE_URL = 'http://api.openweathermap.org/data/2.5/forecast?q=';
 
 var city = 'Towanda';
 
-fetch(BASE_URL + city + '&appid=' + apiKey)
+
+function getCurrentWeather(){
+    fetch(BASE_URL + city + '&appid=' + apiKey + '&units=imperial')
+
     .then(function(res){
         if(!res.ok) throw new Error('ooops');
 
@@ -16,4 +19,5 @@ fetch(BASE_URL + city + '&appid=' + apiKey)
     .catch(function(error){
         console.error(error);
     });
+}
 
