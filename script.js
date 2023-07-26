@@ -1,23 +1,53 @@
 var apiKey = 'cb0fb26fe05c92dfa0ba816b9520d228';
 
-var BASE_URL = 'http://api.openweathermap.org/data/2.5/forecast?q=';
+function getCoordinates(city) {
+	var coordinateUrl = "https://api.openweathermap.org/geo/1.0/direct?q=" + encodeURI(city) + "&limit=1&appid=" + apiKey;
+	fetch(coordinateUrl)
+		.then(function (response) {
+			return response.json();
+		})
+		.then(function (data) {
+			getWeather(data[0].lat, data[0].lon);
+		}).catch(function() {
+			alert("Invalid city name. Please try again.");
+		});
+}
 
-var city = 'Towanda';
+function getWeather(lat, lon) {
+	var weatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial";
 
+	fetch(weatherUrl)
+		.then(function (response) {
+			return response.json();
+		})
+		.then(function (data) {
+			$("#cityName").text(data.name + " " + dayjs().format("M/D/YYYY"));
+			$("#icon").attr("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
+			$("#temp").text("Temp: " + data.main.temp + " \xB0F");
+			$("#wind").text("Wind: " + data.wind.speed + " MPH");
+			$("#humidity").text("Humidity: " + data.main.humidity + "%");
+			getForecast(lat, lon);
+		});
+}
 
-function getCurrentWeather(){
-    fetch(BASE_URL + city + '&appid=' + apiKey + '&units=imperial')
+function getForecast(lat, lon) {
+	var weatherUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=imperial";
 
-    .then(function(res){
-        if(!res.ok) throw new Error('ooops');
-
-        return res.json();
-    })
-    .then(function(data){
-        console.log('data :>>', data);
-    })
-    .catch(function(error){
-        console.error(error);
-    });
+	fetch(weatherUrl)
+		.then(function (response) {
+			return response.json();
+		})
+		.then(function (data) {
+			var counter = 1;
+			for (var i=4; i<=36; i=i+8) {
+				var forecastDay = data.list[i];
+				$("#day"+counter).text(dayjs().add(counter, 'day').format("M/D/YYYY"));
+				$("#icon"+counter).attr("src", "http://openweathermap.org/img/wn/" + forecastDay.weather[0].icon + "@2x.png");
+				$("#temp"+counter).text("Temp: " + forecastDay.main.temp + " \xB0F");
+				$("#wind"+counter).text("Wind: " + forecastDay.wind.speed + " MPH");
+				$("#humidity"+counter).text("Humidity: " + forecastDay.main.humidity + "%");
+				counter++;
+			}
+		});
 }
 
