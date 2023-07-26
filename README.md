@@ -17,6 +17,7 @@
 ## Usage
  Type in a city name in the search bar and click the search button. The forecast will then appear with various information including the temperature, humidity, and wind speed.
  
+ ![Weather Dashboard](./images/Weather-Dashboard.png)
 
 ## Credits
  This application uses the OpenWeatherMap api to retrieve the forecast data.
