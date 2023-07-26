@@ -51,3 +51,36 @@ function getForecast(lat, lon) {
 		});
 }
 
+//gets and saves to local storage
+var searchHistory = JSON.parse(localStorage.getItem("search"));
+if (searchHistory == null) { 
+	searchHistory = [];
+}
+function displaySearchHistory() {
+	$("#searchList").empty();
+    if(searchHistory.length >= 5) {
+        searchHistory.splice(5);
+    }
+	for(var i=0; i<searchHistory.length; i++) {
+		var newBtn = $("<button></button>").text(searchHistory[i]);
+		newBtn.attr("type", "button");
+		newBtn.attr("class", "btn btn-secondary mt-2 historyBtn");
+		$("#searchList").append(newBtn);
+	}
+}
+
+function handleHistorySearch(event) {
+	event.preventDefault();
+	getCoordinates($(this).text())
+}
+$("#citySearch").on( "submit", function(event) {
+	event.preventDefault();
+	searchHistory.unshift($("#city").val());
+	localStorage.setItem("search", JSON.stringify(searchHistory));
+  getCoordinates($("#city").val());
+	displaySearchHistory();
+} );
+
+$('#searchList').on('click', '.historyBtn', handleHistorySearch);
+
+displaySearchHistory();
